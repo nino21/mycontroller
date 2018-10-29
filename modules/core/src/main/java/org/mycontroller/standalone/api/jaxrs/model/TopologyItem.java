@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Jeeva Kandasamy (jkandasa@gmail.com)
+ * Copyright 2015-2018 Jeeva Kandasamy (jkandasa@gmail.com)
  * and other contributors as indicated by the @author tags.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,6 +32,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class TopologyItem {
     private Integer id;
+    private String localId;
     private String name;
     private String kind;
     private RESOURCE_TYPE type;

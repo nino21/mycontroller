@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Jeeva Kandasamy (jkandasa@gmail.com)
+ * Copyright 2015-2018 Jeeva Kandasamy (jkandasa@gmail.com)
  * and other contributors as indicated by the @author tags.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +25,7 @@ import org.mycontroller.standalone.AppProperties.RESOURCE_TYPE;
 import org.mycontroller.standalone.api.jaxrs.model.AllowedResources;
 import org.mycontroller.standalone.api.jaxrs.model.Query;
 import org.mycontroller.standalone.api.jaxrs.model.QueryResponse;
+import org.mycontroller.standalone.api.jaxrs.model.ResourcePurgeConf.OPERATOR;
 import org.mycontroller.standalone.db.tables.GatewayTable;
 import org.mycontroller.standalone.db.tables.Node;
 import org.mycontroller.standalone.db.tables.Sensor;
@@ -488,6 +489,33 @@ public abstract class BaseAbstractDaoImpl<Tdao, Tid> {
         }
 
         return new ArrayList<Tdao>();
+    }
+
+    protected void updatePurgeCondition(Where<?, Object> where, String key, Object value,
+            OPERATOR operator) throws SQLException {
+        switch (operator) {
+            case EQ:
+                where.eq(key, value);
+                break;
+            case GT:
+                where.gt(key, value);
+                break;
+            case LT:
+                where.lt(key, value);
+                break;
+            case GE:
+                where.ge(key, value);
+                break;
+            case LE:
+                where.le(key, value);
+                break;
+            case NE:
+                where.ne(key, value);
+                break;
+            default:
+                where.eq(key, value);
+                break;
+        }
     }
 
 }

@@ -28,6 +28,7 @@ import org.mycontroller.standalone.provider.mysensors.MySensors.MYS_MESSAGE_TYPE
 import org.mycontroller.standalone.provider.mysensors.MySensors.MYS_MESSAGE_TYPE_STREAM;
 import org.mycontroller.standalone.utils.McUtils;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -35,6 +36,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since 1.2.0
  */
 @Slf4j
+@ToString
 public class MessageParserAbstract {
     private int gatewayId;
     private int nodeId;
@@ -58,11 +60,11 @@ public class MessageParserAbstract {
         String[] msgArry = messageMQTT.getTopic().split("/");
         int index = msgArry.length - 5;
         if (msgArry.length >= 6) {
-            nodeId = Integer.valueOf(msgArry[index]);
-            childSensorId = Integer.valueOf(msgArry[index + 1]);
-            messageType = Integer.valueOf(msgArry[index + 2]);
-            ack = Integer.valueOf(msgArry[index + 3]);
-            subType = Integer.valueOf(msgArry[index + 4]);
+            nodeId = McUtils.getInteger(msgArry[index]);
+            childSensorId = McUtils.getInteger(msgArry[index + 1]);
+            messageType = McUtils.getInteger(msgArry[index + 2]);
+            ack = McUtils.getInteger(msgArry[index + 3]);
+            subType = McUtils.getInteger(msgArry[index + 4]);
             _logger.debug("Message: {}", toString());
         } else {
             _logger.debug("Unknown message format, [{}]", messageMQTT);
@@ -107,11 +109,11 @@ public class MessageParserAbstract {
             payload = msgArry[5];
         }
         if (msgArry.length >= 5) {
-            nodeId = Integer.valueOf(msgArry[0]);
-            childSensorId = Integer.valueOf(msgArry[1]);
-            messageType = Integer.valueOf(msgArry[2]);
-            ack = Integer.valueOf(msgArry[3]);
-            subType = Integer.valueOf(msgArry[4]);
+            nodeId = McUtils.getInteger(msgArry[0]);
+            childSensorId = McUtils.getInteger(msgArry[1]);
+            messageType = McUtils.getInteger(msgArry[2]);
+            ack = McUtils.getInteger(msgArry[3]);
+            subType = McUtils.getInteger(msgArry[4]);
             _logger.debug("Message: {}", toString());
         } else {
             _logger.debug("Unknown message format: [gatewayId: {}, payload:{}]", gatewayId, rawData);

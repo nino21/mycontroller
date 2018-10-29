@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Jeeva Kandasamy (jkandasa@gmail.com)
+ * Copyright 2015-2018 Jeeva Kandasamy (jkandasa@gmail.com)
  * and other contributors as indicated by the @author tags.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +18,7 @@ package org.mycontroller.standalone.db.dao;
 
 import java.util.List;
 
+import org.mycontroller.standalone.api.jaxrs.model.ResourcePurgeConf;
 import org.mycontroller.standalone.db.tables.MetricsCounterTypeDevice;
 import org.mycontroller.standalone.metrics.MetricsUtils.AGGREGATION_TYPE;
 
@@ -28,6 +29,8 @@ import org.mycontroller.standalone.metrics.MetricsUtils.AGGREGATION_TYPE;
 public interface MetricsCounterTypeDeviceDao extends BaseDao<MetricsCounterTypeDevice, Object> {
 
     void deletePrevious(MetricsCounterTypeDevice metric);
+
+    void deletePrevious(MetricsCounterTypeDevice metric, ResourcePurgeConf purgeConfig);
 
     void deleteBySensorVariableRefId(int sensorRefId);
 

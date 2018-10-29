@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Jeeva Kandasamy (jkandasa@gmail.com)
+ * Copyright 2015-2018 Jeeva Kandasamy (jkandasa@gmail.com)
  * and other contributors as indicated by the @author tags.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,6 +21,14 @@ myControllerModule.service('TopologyService', function($filter) {
       $filter('translate')('NAME') + ': ' + d.item.name,
       $filter('translate')('TYPE') + ': ' + $filter('translate')(d.item.type)
     ];
+
+    if(d.item.kind === "Node"){
+      status.push($filter('translate')('EUI') + ': ' + d.item.localId);
+    }
+
+    if(d.item.kind === "Sensor"){
+      status.push($filter('translate')('SENSOR_ID') + ': ' + d.item.localId);
+    }
 
     if(d.item.kind === "Sensor" || d.item.kind === "SensorVariable"){
       status.push($filter('translate')('SUB_TYPE') + ': ' + d.item.subType.locale);

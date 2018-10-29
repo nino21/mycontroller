@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Jeeva Kandasamy (jkandasa@gmail.com)
+ * Copyright 2015-2018 Jeeva Kandasamy (jkandasa@gmail.com)
  * and other contributors as indicated by the @author tags.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -58,12 +58,18 @@ public class NodeDaoImpl extends BaseAbstractDaoImpl<Node, Integer> implements N
 
     @Override
     public Node get(Integer gatewayId, String nodeEui) {
+        QueryBuilder<Node, Integer> queryBuilder = null;
         try {
-            QueryBuilder<Node, Integer> queryBuilder = this.getDao().queryBuilder();
+            queryBuilder = this.getDao().queryBuilder();
             queryBuilder.where().eq(Node.KEY_GATEWAY_ID, gatewayId).and().eq(Node.KEY_EUI, nodeEui);
             return queryBuilder.queryForFirst();
         } catch (SQLException ex) {
-            _logger.error("unable to get Node", ex);
+            _logger.error("unable to get Node. gatewayId:{}, nodeEui:{}", gatewayId, nodeEui, ex);
+            try {
+                _logger.error("PrepareStatement:[{}]", queryBuilder.prepareStatementString());
+            } catch (SQLException qEx) {
+                _logger.error("Exception on prepareStatement,", qEx);
+            }
             return null;
         }
     }

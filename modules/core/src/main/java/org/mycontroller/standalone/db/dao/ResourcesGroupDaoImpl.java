@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Jeeva Kandasamy (jkandasa@gmail.com)
+ * Copyright 2015-2018 Jeeva Kandasamy (jkandasa@gmail.com)
  * and other contributors as indicated by the @author tags.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -148,5 +148,10 @@ public class ResourcesGroupDaoImpl extends BaseAbstractDaoImpl<ResourcesGroup, I
             _logger.error("unable to run query:[{}]", query, ex);
             return null;
         }
+    }
+
+    @Override
+    public List<ResourcesGroup> getAll(List<Integer> ids) {
+        return super.getAll(ResourcesGroup.KEY_ID, ids);
     }
 }
