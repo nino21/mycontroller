@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Jeeva Kandasamy (jkandasa@gmail.com)
+ * Copyright 2015-2018 Jeeva Kandasamy (jkandasa@gmail.com)
  * and other contributors as indicated by the @author tags.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -96,7 +96,7 @@ public class McUtils {
     }
 
     public static Double getDouble(String value, int scale) {
-        if (value != null && !value.equals("null")) {
+        if (value != null && !value.equals("null") && value.trim().length() > 0) {
             return round(Double.valueOf(value), scale);
         }
         return null;
@@ -110,7 +110,10 @@ public class McUtils {
         return String.valueOf(truncatedDouble);
     }
 
-    public static String getDoubleAsString(double value) {
+    public static String getDoubleAsString(Double value) {
+        if (value == null) {
+            return null;
+        }
         String _value = getDoubleAsString(value, 3);
         if (_value.endsWith(".0")) {
             _value = _value.substring(0, _value.length() - 2);
@@ -121,7 +124,9 @@ public class McUtils {
 
     public static String getDoubleAsString(String value) {
         try {
-            if (value != null && !value.equalsIgnoreCase("null")) {
+            if (value != null
+                    && !value.equalsIgnoreCase("null")
+                    && !value.equals("-")) {
                 return getDoubleAsString(Double.valueOf(value));
             } else {
                 return "-";
@@ -135,7 +140,13 @@ public class McUtils {
 
     public static Integer getInteger(String value) {
         if (value != null) {
-            return Integer.valueOf(value);
+            try {
+                return Integer.valueOf(value);
+            } catch (NumberFormatException ex) {
+                _logger.warn("Looks like supplied value[{}] is not a integer,"
+                        + " non-integers will be removed and retried...", value);
+                return Integer.valueOf(value.replaceAll("[^0-9]", ""));
+            }
         } else {
             return null;
         }

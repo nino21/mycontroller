@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Jeeva Kandasamy (jkandasa@gmail.com)
+ * Copyright 2015-2018 Jeeva Kandasamy (jkandasa@gmail.com)
  * and other contributors as indicated by the @author tags.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -49,6 +49,8 @@ public class McGuiSettings {
     private Long globalPageRefreshTime;
     private Integer dashboardLimit;
     private Integer tableRowsLimit;
+    private boolean googleAnalyticsEnabled;
+    private String googleAnalyticsTid;
 
     public McGuiSettings() {
         Date date = new Date();
@@ -70,5 +72,7 @@ public class McGuiSettings {
                 .getGlobalPageRefreshTime();
         dashboardLimit = AppProperties.getInstance().getControllerSettings().getDashboardLimit();
         tableRowsLimit = AppProperties.getInstance().getControllerSettings().getTableRowsLimit();
+        googleAnalyticsEnabled = AppProperties.getInstance().isGoogleAnalyticsEnabled();
+        googleAnalyticsTid = AppProperties.GOOGLE_ANALYTICS_TID;
     }
 }

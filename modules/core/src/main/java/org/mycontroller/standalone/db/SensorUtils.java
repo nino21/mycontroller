@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Jeeva Kandasamy (jkandasa@gmail.com)
+ * Copyright 2015-2018 Jeeva Kandasamy (jkandasa@gmail.com)
  * and other contributors as indicated by the @author tags.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,6 +20,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mycontroller.standalone.api.GoogleAnalyticsApi;
 import org.mycontroller.standalone.db.tables.Sensor;
 import org.mycontroller.standalone.db.tables.SensorVariable;
 import org.mycontroller.standalone.message.McMessageUtils.MESSAGE_TYPE_SET_REQ;
@@ -204,6 +205,9 @@ public class SensorUtils {
             } else if (sensorVariable.getMetricType() == METRIC_TYPE.DOUBLE) {
                 Unit unit = UnitUtils.getUnit(sensorVariable.getUnitType());
                 Double orgData = McUtils.getDouble(data);
+                if (orgData == null) {
+                    return null;
+                }
                 if (orgData < unit.getLimitLow()) {
                     return McUtils.getDoubleAsString(orgData * unit.getMtplLow()) + " " + unit.getUnitLow();
                 } else if (orgData > unit.getLimitHigh()) {
@@ -237,6 +241,7 @@ public class SensorUtils {
                         SensorVariable.builder().sensor(sensor)
                                 .variableType(MESSAGE_TYPE_SET_REQ.fromString(newVariable)).build()
                                 .updateUnitAndMetricType());
+                GoogleAnalyticsApi.instance().trackSensorVariableCreation(newVariable);
             }
         }
         //Remove left items

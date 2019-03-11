@@ -28,6 +28,7 @@ import org.apache.commons.io.FileUtils;
 import org.jboss.resteasy.plugins.server.tjws.TJWSEmbeddedJaxrsServer;
 import org.jboss.resteasy.spi.ResteasyDeployment;
 import org.mycontroller.standalone.AppProperties.MC_LANGUAGE;
+import org.mycontroller.standalone.api.GoogleAnalyticsApi;
 import org.mycontroller.standalone.api.jaxrs.AuthenticationHandler;
 import org.mycontroller.standalone.api.jaxrs.BackupHandler;
 import org.mycontroller.standalone.api.jaxrs.DashboardHandler;
@@ -38,6 +39,7 @@ import org.mycontroller.standalone.api.jaxrs.GatewayHandler;
 import org.mycontroller.standalone.api.jaxrs.MetricsHandler;
 import org.mycontroller.standalone.api.jaxrs.MyControllerHandler;
 import org.mycontroller.standalone.api.jaxrs.NodeHandler;
+import org.mycontroller.standalone.api.jaxrs.OSCommandExecuterHandler;
 import org.mycontroller.standalone.api.jaxrs.OperationHandler;
 import org.mycontroller.standalone.api.jaxrs.OptionsHandler;
 import org.mycontroller.standalone.api.jaxrs.ResourcesDataHandler;
@@ -77,6 +79,7 @@ import org.mycontroller.standalone.scheduler.SchedulerUtils;
 import org.mycontroller.standalone.scripts.McScriptEngineUtils;
 import org.mycontroller.standalone.settings.SettingsUtils;
 import org.mycontroller.standalone.timer.TimerUtils;
+import org.mycontroller.standalone.utils.McServerFileUtils;
 import org.mycontroller.standalone.utils.McUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -95,6 +98,24 @@ public class StartApp {
 
     public static void main(String[] args) {
         try {
+            _logger.info(
+                    "\n\n"
+                            + "****************************************** Data Processing Agreement *****************"
+                            + "**************************\n"
+                            + "By using this software you agree that the following non-PII (non personally"
+                            + " identifiable information data       \n"
+                            + "will be collected, processed and used by MyController.org for the purpose of"
+                            + " improving quality of this software.\n"
+                            + "----------------------------------------------------------------------------"
+                            + "------------------------------------\n"
+                            + "If you do not like to share anonymous data(non-PII), disable it in "
+                            + "'mycontroller/conf/mycontroller.properties'  \n"
+                            + "by setting 'mcc.collect.anonymous.data=false' and **restart** this server and **logout"
+                            + " and login** in the UI.   \n"
+                            + "                                          ------ Thank you! ------                     "
+                            + "                         \n"
+                            + "***************************************************************************************"
+                            + "*************************\n\n");
             startMycontroller();
         } catch (Exception ex) {
             _logger.error("Unable to start application, refer error log,", ex);
@@ -110,18 +131,19 @@ public class StartApp {
         _logger.debug("Operating System detail:[os:{},arch:{},version:{}]",
                 AppProperties.getOsName(), AppProperties.getOsArch(), AppProperties.getOsVersion());
         startServices();
-        _logger.info("MyController.org server started in [{}] ms", System.currentTimeMillis() - start);
+        long duration = System.currentTimeMillis() - start;
+        GoogleAnalyticsApi.instance().trackStartTime(duration);
+        _logger.info("MyController.org server started in [{}] ms", duration);
     }
 
     private static void loadStartingValues() {
-        //Update sunrise/sunset time
         try {
+            // update log file location
+            McServerFileUtils.updateApplicationLogLocation();
+            // update sunrise/sunset time
             TimerUtils.updateSunriseSunset();
             _logger.debug("Sunrise[{}], Sunset[{}] time updated", TimerUtils.getSunriseTime(),
                     TimerUtils.getSunsetTime());
-            //Disable all alram triggeres
-            //DaoUtils.getAlarmDao().disableAllTriggered();
-
         } catch (Exception ex) {
             _logger.error("Failed to update sunrise/sunset time", ex);
         }
@@ -144,6 +166,7 @@ public class StartApp {
         resources.add(MyControllerHandler.class.getName());
         resources.add(NodeHandler.class.getName());
         resources.add(OperationHandler.class.getName());
+        resources.add(OSCommandExecuterHandler.class.getName());
         resources.add(ResourcesDataHandler.class.getName());
         resources.add(ResourcesGroupHandler.class.getName());
         resources.add(ResourcesLogsHandler.class.getName());
@@ -305,11 +328,18 @@ public class StartApp {
     private static void cleanUpServices() {
         // clean the services
         // - MQTT client location
+        // - MQTT broker location
 
         try {
             File mqttClientDir = new File(AppProperties.getInstance().getMqttClientPersistentStoresLocation());
             if (mqttClientDir.exists()) {
                 FileUtils.cleanDirectory(mqttClientDir);
+                _logger.debug("MQTT Client persistent store cleared. [{}]", mqttClientDir.getCanonicalFile());
+            }
+            File mqttBrokerDir = new File(AppProperties.getInstance().getMqttBrokerPersistentStore()).getParentFile();
+            if (mqttBrokerDir.exists()) {
+                FileUtils.cleanDirectory(mqttBrokerDir);
+                _logger.debug("MQTT broker persistent store cleared. [{}]", mqttBrokerDir.getCanonicalFile());
             }
         } catch (IOException ex) {
             _logger.error("Exception,", ex);
@@ -326,12 +356,14 @@ public class StartApp {
         // - Stop message Monitor Thread
         // - Clear Raw Message Queue (Optional)
         // - Stop DB service
+        // - Stop metric engine
         stopHTTPWebServer();
         ExternalServerFactory.clearDrivers();
         SchedulerUtils.stop();
         GatewayUtils.unloadEngineAll();
         MoquetteMqttBroker.stop();
         DataBaseUtils.stop();
+        MetricsUtils.shutdownEngine();
         OffHeapFactory.close();
         McThreadPoolFactory.shutdownNow();
         _logger.debug("All services stopped.");

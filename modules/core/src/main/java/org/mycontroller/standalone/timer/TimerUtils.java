@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Jeeva Kandasamy (jkandasa@gmail.com)
+ * Copyright 2015-2018 Jeeva Kandasamy (jkandasa@gmail.com)
  * and other contributors as indicated by the @author tags.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +25,7 @@ import java.util.TimeZone;
 
 import org.mycontroller.standalone.AppProperties;
 import org.mycontroller.standalone.AppProperties.RESOURCE_TYPE;
+import org.mycontroller.standalone.api.GoogleAnalyticsApi;
 import org.mycontroller.standalone.db.DaoUtils;
 import org.mycontroller.standalone.db.ResourceOperation;
 import org.mycontroller.standalone.db.ResourcesLogsUtils;
@@ -346,6 +347,7 @@ public class TimerUtils {
         timer.setInternalVariable1(null);
         //add timer
         DaoUtils.getTimerDao().create(timer);
+        GoogleAnalyticsApi.instance().trackTimerCreation(timer.getTimerType().getText());
         //Keep operations id
         List<Integer> operationIds = timer.getOperationIds();
         //update details of timer and load it

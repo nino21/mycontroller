@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Jeeva Kandasamy (jkandasa@gmail.com)
+ * Copyright 2015-2018 Jeeva Kandasamy (jkandasa@gmail.com)
  * and other contributors as indicated by the @author tags.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mycontroller.standalone.db.tables.RoleUserMap;
+import org.mycontroller.standalone.exceptions.McDatabaseException;
 
 import com.j256.ormlite.support.ConnectionSource;
 
@@ -83,6 +84,7 @@ public class RoleUserMapDaoImpl extends BaseAbstractDaoImpl<RoleUserMap, Object>
             }
         } catch (SQLException ex) {
             _logger.error("Exception, ", ex);
+            throw new McDatabaseException(ex);
         }
         return roleIds;
     }

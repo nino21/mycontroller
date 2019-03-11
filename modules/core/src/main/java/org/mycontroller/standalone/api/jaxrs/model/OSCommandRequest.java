@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Jeeva Kandasamy (jkandasa@gmail.com)
+ * Copyright 2015-2018 Jeeva Kandasamy (jkandasa@gmail.com)
  * and other contributors as indicated by the @author tags.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,17 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.mycontroller.standalone.db.dao;
+package org.mycontroller.standalone.api.jaxrs.model;
 
-import java.util.List;
-
-import org.mycontroller.standalone.db.tables.SystemJob;
+import groovy.transform.ToString;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Jeeva Kandasamy (jkandasa)
- * @since 0.0.1
+ * @since 1.3.0
  */
-public interface SystemJobDao extends BaseDao<SystemJob, Integer> {
 
-    List<SystemJob> getAllEnabled();
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+public class OSCommandRequest {
+    private String os;
+    private String command;
+
+    public String getOs() {
+        if (os == null) {
+            os = "common";
+        }
+        return os;
+    }
 }

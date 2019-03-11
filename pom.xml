@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright 2015-2018 Jeeva Kandasamy (jkandasa@gmail.com)
+    Copyright 2015-2019 Jeeva Kandasamy (jkandasa@gmail.com)
     and other contributors as indicated by the @author tags.
 
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,12 +23,12 @@
   <parent>
     <groupId>org.mycontroller</groupId>
     <artifactId>mycontroller-parent</artifactId>
-    <version>29</version>
+    <version>38</version>
   </parent>
 
   <groupId>org.mycontroller.standalone</groupId>
   <artifactId>mycontroller-standalone-parent</artifactId>
-  <version>1.2.0.Final</version>
+  <version>1.4.0.Final</version>
   <url>https://github.com/mycontroller-org</url>
   <inceptionYear>2015</inceptionYear>
   <packaging>pom</packaging>
@@ -284,6 +284,12 @@
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-core</artifactId>
+    </dependency>
+
+    <!-- InfluxDb client -->
+    <dependency>
+      <groupId>org.influxdb</groupId>
+      <artifactId>influxdb-java</artifactId>
     </dependency>
 
   </dependencies>

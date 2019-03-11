@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Jeeva Kandasamy (jkandasa@gmail.com)
+ * Copyright 2015-2018 Jeeva Kandasamy (jkandasa@gmail.com)
  * and other contributors as indicated by the @author tags.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -121,7 +121,9 @@ myControllerModule.factory('displayRestError', function(alertService){
       }else if(error.data != null){
         if(error.data.errorMessage != null){
           displayMessage = error.status +': '+ error.statusText+'<br>'+error.data.errorMessage;
-        }else{
+        } else if(error.data.message != null) {
+          displayMessage = error.status +': '+ error.statusText+'<br>'+error.data.message;
+        } else {
          displayMessage = error.status +': '+ error.statusText;
         }
       }else if(data != null){
